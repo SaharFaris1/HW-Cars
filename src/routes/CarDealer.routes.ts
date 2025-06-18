@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
-    createCarDealer,
-    getAllCarDealers,
-    getDealerById,
+  createCarDealer,
+    getCarDealers,
+    getCarDealerById,
     updateCarDealer,
     deleteDealerById,
 } from '../controllers/CarDealer.controller';
@@ -10,10 +10,10 @@ import {
 const router = Router({ mergeParams: true });
 
 router.route('/')
-  .get(getAllCarDealers)
+  .get(getCarDealers)
   .post(createCarDealer);
 router.route('/:id')
-  .get(getDealerById)
+  .get(getCarDealerById)
   .put(updateCarDealer)
   .delete(deleteDealerById);
 

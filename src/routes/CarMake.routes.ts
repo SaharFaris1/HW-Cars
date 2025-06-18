@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-    createCarMaker,
+  createCarMaker,
     findAll,
     findById,
     updateCarMake,

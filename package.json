@@ -1,6 +1,7 @@
 {
   "name": "learn-mern-stack",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -15,6 +16,8 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.0",
     "morgan": "^1.10.0",
     "remove": "^0.1.5",
     "ulid": "^3.0.1",

@@ -1,147 +1,133 @@
 import { Request, Response } from "express";
+import CarDealerModel from "../models/CarDealer.model";
 import { OK, CREATED, BAD_REQUEST, NOT_FOUND } from "../utils/http-status";
-import { dealerStore } from "../store/CarDealer.store";
-export const createCarDealer = async (
-    req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const { name, email, city } = req.body;
 
-        if (!name || !email || !city) {
-            res.status(BAD_REQUEST).json({
-                success: false,
-                error: "all fields are required",
-            });
-            return;
-        }
 
-        const newDealer = dealerStore.create({ name, email, city });
+export const createCarDealer = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id, name, email, city } = req.body;
 
-        res.status(CREATED).json({
-            success: true,
-            data: newDealer,
-        });
-    } catch (error) {
+    if (!id || !name || !email || !city) {
         res.status(BAD_REQUEST).json({
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to create car dealer",
+          success: false,
+          error: "All fields are required",
         });
-    }
+        return;
+      }
+    const newDealer = await CarDealerModel.create
+    ({ 
+        id,
+         name, 
+         email, 
+         city
+         });
+ res.status(CREATED).json({
+      success: true,
+      data: newDealer,
+    });
+  } catch (error) {
+     res.status(BAD_REQUEST).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create car dealer',
+    });
+  }
 };
 
-export const getAllCarDealers = async (
-    _req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const dealers = dealerStore.findAll();
-        res.status(OK).json({
-            success: true,
-            data: dealers,
-        });
-    } catch (error) {
-        res.status(BAD_REQUEST).json({
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to get car dealers",
-        });
-    }
+
+export const getCarDealers = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const dealers = await CarDealerModel.find();
+     res.status(OK).json({
+      success: true,
+      data: dealers,
+    });
+  } catch (error) {
+     res.status(BAD_REQUEST).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch car dealers',
+    });
+  }
 };
 
-export const getDealerById = async (
-    req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const dealer = dealerStore.findById(req.params.id);
 
-        if (!dealer) {
-            res.status(NOT_FOUND).json({
-                success: false,
-                error: "Dealer not found",
-            });
-            return;
-        }
-
-        res.status(OK).json({
-            success: true,
-            data: dealer,
-        });
-    } catch (error) {
-        res.status(BAD_REQUEST).json({
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to get car dealer",
-        });
+export const getCarDealerById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const dealer = await CarDealerModel.findById(req.params.id);
+    if (!dealer) {
+       res.status(NOT_FOUND).json({
+        success: false,
+        error: 'Car dealer not found',
+      });
     }
+
+     res.status(OK).json({
+      success: true,
+      data: dealer,
+    });
+  } catch (error) {
+     res.status(BAD_REQUEST).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch car dealer',
+    });
+  }
 };
 
-export const updateCarDealer = async (
-    req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const { name, email, city } = req.body;
-        const { id } = req.params;
 
-        const existingDealer = dealerStore.findById(id);
-        if (!existingDealer) {
-            res.status(NOT_FOUND).json({
-                success: false,
-                error: "Dealer not found",
-            });
-            return;
-        }
+export const updateCarDealer = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, email, city } = req.body;
+// ابحث  حسب ID ثم تحديثه
+    const updated = await CarDealerModel.findByIdAndUpdate(
+      req.params.id,{ 
+        name,
+         email, 
+         city },
+      { 
+        new: true,  // يجعل الدالة ترجع القيمه بعد التحديث
+     
+        Validators: true // التحقق من صحة البيانات عند التحديث
+     }
+    );
 
-        const updatedDealer = dealerStore.update(id, { name, email, city });
-
-        if (!updatedDealer) {
-            res.status(BAD_REQUEST).json({
-                success: false,
-                error: "Failed to update car dealer",
-            });
-            return;
-        }
-
-        res.status(OK).json({
-            success: true,
-            data: updatedDealer,
-        });
-    } catch (error) {
-        res.status(BAD_REQUEST).json({
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to update dealer",
-        });
+    if (!updated) {
+       res.status(NOT_FOUND).json({
+        success: false,
+        error: 'Car dealer not found',
+      });
     }
+
+     res.status(OK).json({
+      success: true,
+      data: updated,
+    });
+  } catch (error) {
+     res.status(BAD_REQUEST).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update dealer',
+    });
+  }
 };
 
-export const deleteDealerById = async (
-    req: Request,
-    res: Response
-): Promise<void> => {
-    try {
-        const { id } = req.params;
 
-        const deleted = dealerStore.delete(id);
+export const deleteDealerById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const deleted = await CarDealerModel.findByIdAndDelete(req.params.id);
 
-        if (!deleted) {
-            res.status(NOT_FOUND).json({
-                success: false,
-                error: "Failed to delete dealer  ",
-            });
-            return;
-        }
-
-
-        dealerStore.deleteByCarDealersId(id);
-
-        res.status(OK).json({
-            success: true,
-            message: "Dealer deleted successfully",
-        });
-    } catch (error) {
-        res.status(BAD_REQUEST).json({
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to delete car dealer",
-        });
+    if (!deleted) {
+       res.status(NOT_FOUND).json({
+        success: false,
+        error: 'Car dealer not found',
+      });
     }
+
+     res.status(OK).json({
+      success: true,
+      message: 'Dealer deleted successfully',
+    });
+  } catch (error) {
+     res.status(BAD_REQUEST).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete car dealer',
+    });
+  }
 };

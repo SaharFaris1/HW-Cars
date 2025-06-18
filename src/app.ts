@@ -9,9 +9,10 @@ import { OK, INTERNAL_SERVER_ERROR } from './utils/http-status';
 import listCar from './routes/Car.routes';
 import listDealer from './routes/CarDealer.routes';
 import listMake from './routes/CarMake.routes';
+import { connectDB } from './config/db';
 // Load environment variables
 dotenv.config();
-
+connectDB()
 const app: Express = express();
 
 // Middleware

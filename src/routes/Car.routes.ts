@@ -4,7 +4,7 @@ import {
   getAllCars,
   getCarById,
   updateCar,
-  deleteById,
+  deleteCar,
 } from '../controllers/Car.controller';
 const router = Router();
 router.route('/')
@@ -14,6 +14,6 @@ router.route('/')
 router.route('/:id')
   .get(getCarById)     
   .put(updateCar)     
-  .delete(deleteById); 
+  .delete(deleteCar); 
 
 export default router;
